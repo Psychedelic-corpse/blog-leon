@@ -5,6 +5,7 @@ import { Blog, WithContext } from "schema-dts";
 import JsonLd from "@/components/JsonLd";
 import Image from "next/image";
 import { urlForImage } from "../../../sanity/lib/image";
+import { notFound } from "next/navigation";
 
 const components = {
   types: {
@@ -43,6 +44,10 @@ export async function generateMetadata({ params }: any) {
   const { slug } = await params;
   const post = await getPost(slug);
 
+  if (!post) {
+    return { title: "Post not found" };
+  }
+
   return {
     title: `${post.title} - Ivan Barinaga Psicólogo`,
     description: post.excerpt,
@@ -67,6 +72,10 @@ export async function generateMetadata({ params }: any) {
 export default async function BlogPostPage({ params }: any) {
   const { slug } = await params;
   const post = await getPost(slug);
+
+  if (!post) {
+    notFound();
+  }
 
   const jsonLd: WithContext<Blog> = {
     "@context": "https://schema.org",
