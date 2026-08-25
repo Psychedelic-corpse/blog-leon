@@ -8,6 +8,9 @@ import Image from "next/image";
 import { urlForImage } from "../../../sanity/lib/image";
 import { notFound } from "next/navigation";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 async function getPost(slug: string) {
   const query = groq`
     *[_type == "post" && slug.current == $slug][0] {

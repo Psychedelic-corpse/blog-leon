@@ -12,6 +12,9 @@ export const metadata = {
   description: "Espacio personal y escritos de Leon Di Monte. Ensayos, notas y reflexiones.",
 };
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 async function getRecentPosts() {
   try {
     const query = groq`

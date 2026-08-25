@@ -10,6 +10,9 @@ export const metadata = {
   description: "Archivo de artículos, lecturas y ensayos de Leon Di Monte.",
 };
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 async function getPosts(page = 1, pageSize = 12) {
   try {
     const skip = (page - 1) * pageSize;
