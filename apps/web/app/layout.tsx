@@ -7,9 +7,20 @@ import Footer from "@/components/Footer";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "Ivan Barinaga - Psicólogo Cognitivo Conductual en Rosario",
-  description:
-    "Psicólogo especializado en terapia cognitivo-conductual para depresión, TOC, ataques de pánico, ansiedad y fobias en Rosario, Argentina.",
+  metadataBase: new URL("https://leondm.com"),
+  title: {
+    default: "Leon Di Monte",
+    template: "%s · Leon Di Monte",
+  },
+  description: "Espacio personal y escritos de Leon Di Monte. Ensayos, notas y reflexiones.",
+  openGraph: {
+    title: "Leon Di Monte",
+    description: "Espacio personal y escritos de Leon Di Monte.",
+    url: "https://leondm.com",
+    siteName: "Leon Di Monte",
+    locale: "es_ES",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

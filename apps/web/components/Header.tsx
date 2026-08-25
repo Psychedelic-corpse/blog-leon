@@ -10,80 +10,76 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-950/80 backdrop-blur-sm">
-      <nav className="container mx-auto px-4 h-16 flex items-center justify-between">
+    <header className="sticky top-0 z-50 w-full border-b border-gray-100 dark:border-neutral-800/80 bg-white/90 dark:bg-[#0c0c0c]/90 backdrop-blur-md transition-colors">
+      <nav className="container max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
         <Link
           href="/"
-          className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-400"
+          className="text-lg font-medium tracking-tight text-neutral-900 dark:text-neutral-100 hover:opacity-80 transition-opacity"
         >
-          Ivan Barinaga
+          Leon Di Monte
         </Link>
 
-        {/* Mobile menu button */}
-        <button
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
-          aria-label="Menu"
-        >
-          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-
         {/* Desktop menu */}
-        <div className="hidden md:flex items-center space-x-6">
+        <div className="hidden sm:flex items-center space-x-8">
+          <Link
+            href="/"
+            className="text-sm font-normal text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
+          >
+            Inicio
+          </Link>
           <Link
             href="/blog"
-            className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+            className="text-sm font-normal text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
           >
-            Blog
+            Escritos
           </Link>
           <button
-            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300"
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="p-2 rounded-md text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-800/60 transition-colors"
             aria-label="Cambiar tema"
           >
-            {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
+            {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
           </button>
-          <Link
-            href="https://wa.me/5493415698000?text=Hola%20vengo%20de%20tu%20sitio%20web%20y%20me%20gustaria%20saber%20mas"
-            target="_blank"
-            className="inline-flex items-center px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-full hover:bg-blue-700 transition-colors"
-          >
-            Contactar
-          </Link>
         </div>
 
-        {/* Mobile menu */}
-        {isMenuOpen && (
-          <div className="absolute top-16 left-0 right-0 bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 md:hidden">
-            <div className="container mx-auto px-4 py-4 space-y-4">
-              <Link
-                href="/blog"
-                className="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Blog
-              </Link>
-              <div className="flex items-center justify-between">
-                <button
-                  onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-                  className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300"
-                  aria-label="Cambiar tema"
-                >
-                  {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
-                </button>
-                <Link
-                  href="https://wa.me/5493415698000?text=Hola%20vengo%20de%20tu%20sitio%20web%20y%20me%20gustaria%20saber%20mas"
-                  target="_blank"
-                  className="inline-flex items-center px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-full hover:bg-blue-700 transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Contactar
-                </Link>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Mobile menu button */}
+        <div className="flex items-center space-x-2 sm:hidden">
+          <button
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="p-2 text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100"
+            aria-label="Cambiar tema"
+          >
+            {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="p-2 text-neutral-600 dark:text-neutral-300"
+            aria-label="Menu"
+          >
+            {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
       </nav>
+
+      {/* Mobile dropdown */}
+      {isMenuOpen && (
+        <div className="border-b border-gray-100 dark:border-neutral-800 bg-white dark:bg-[#0c0c0c] sm:hidden px-6 py-4 space-y-3">
+          <Link
+            href="/"
+            className="block text-sm text-neutral-700 dark:text-neutral-300 py-1"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Inicio
+          </Link>
+          <Link
+            href="/blog"
+            className="block text-sm text-neutral-700 dark:text-neutral-300 py-1"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Escritos
+          </Link>
+        </div>
+      )}
     </header>
   );
 }

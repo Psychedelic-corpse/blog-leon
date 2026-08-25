@@ -1,92 +1,35 @@
 import Link from "next/link";
-import { Instagram, Youtube } from "lucide-react";
-
-const socialLinks = [
-  {
-    name: "Instagram",
-    href: "https://www.instagram.com/ps.barinagaivan",
-    icon: Instagram,
-  },
-  {
-    name: "YouTube",
-    href: "https://youtube.com/@ps_barinagaivan",
-    icon: Youtube,
-  },
-];
-
-const footerLinks = [
-  {
-    title: "Contacto",
-    links: [
-      {
-        name: "Agendar Cita",
-        href: "https://wa.me/5493415698000?text=Hola%20vengo%20de%20tu%20sitio%20web%20y%20me%20gustaria%20saber%20mas",
-        target: "_blank",
-      },
-    ],
-  },
-];
 
 export default function Footer() {
   return (
-    <footer className="border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950">
-      <div className="container mx-auto px-4 py-12">
-        <div className="flex flex-col md:flex-row justify-between gap-12">
-          <div className="max-w-[600px]">
+    <footer className="border-t border-gray-100 dark:border-neutral-800/80 bg-neutral-50/50 dark:bg-[#0a0a0a] transition-colors mt-20">
+      <div className="container max-w-4xl mx-auto px-6 py-12">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+          <div>
             <Link
               href="/"
-              className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-400"
+              className="text-base font-medium text-neutral-900 dark:text-neutral-100 hover:opacity-80 transition-opacity"
             >
-              Ivan Barinaga
+              Leon Di Monte
             </Link>
-            <p className="mt-4 text-gray-600 dark:text-gray-300">
-              Psicólogo Cognitivo Conductual especializado en terapia para
-              depresión, TOC, ataques de pánico, ansiedad y fobias. Te ayudo a
-              que te conviertas en tu propio psicoterapeuta.
+            <p className="mt-1 text-xs italic text-neutral-500 dark:text-neutral-400">
+              «El núcleo del hombre yace nacarado y soluble»
             </p>
-            <div className="mt-6 flex space-x-4">
-              {socialLinks.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <span className="sr-only">{item.name}</span>
-                  <item.icon className="h-6 w-6" />
-                </a>
-              ))}
-            </div>
           </div>
-          <div className="grid grid-cols-2 gap-8 md:col-span-2">
-            {footerLinks.map((group) => (
-              <div key={group.title}>
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
-                  {group.title}
-                </h3>
-                <ul className="mt-4 space-y-3">
-                  {group.links.map((link) => (
-                    <li key={link.name}>
-                      <Link
-                        href={link.href}
-                        className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
-                        target={link.target}
-                      >
-                        {link.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+
+          <div className="flex items-center space-x-6 text-xs text-neutral-500 dark:text-neutral-400">
+            <Link href="/" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">
+              Inicio
+            </Link>
+            <Link href="/blog" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">
+              Escritos
+            </Link>
           </div>
         </div>
-        <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800">
-          <p className="text-center text-gray-600 dark:text-gray-300">
-            &copy; {new Date().getFullYear()} Ivan Barinaga. Todos los derechos
-            reservados.
-          </p>
+
+        <div className="mt-8 pt-6 border-t border-gray-200/60 dark:border-neutral-800/60 flex flex-col sm:flex-row justify-between text-xs text-neutral-400 dark:text-neutral-500">
+          <p>© {new Date().getFullYear()} Leon Di Monte. Todos los derechos reservados.</p>
+          <p className="mt-2 sm:mt-0 font-mono text-[11px]">leondm.com</p>
         </div>
       </div>
     </footer>

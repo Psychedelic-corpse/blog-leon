@@ -13,20 +13,19 @@ export async function GET() {
 
   // Define static routes
   const staticPages = [
-    { url: "https://ivanbarinaga.com/", changefreq: "never", priority: 1.0 },
+    { url: "https://leondm.com/", changefreq: "weekly", priority: 1.0 },
     {
-      url: "https://ivanbarinaga.com/blog",
+      url: "https://leondm.com/blog",
       changefreq: "daily",
       priority: 0.8,
     },
-    // Add more static pages as needed
   ];
 
   // Combine static and dynamic routes
   const allPages = [
     ...staticPages,
     ...posts.map((post: any) => ({
-      url: `https://ivanbarinaga.com/blog/${post.slug.current}`,
+      url: `https://leondm.com/blog/${post.slug.current}`,
       changefreq: "never",
       priority: 0.7,
     })),

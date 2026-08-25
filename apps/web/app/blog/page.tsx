@@ -3,97 +3,161 @@ import { client } from "../../sanity/lib/client";
 import { groq } from "next-sanity";
 import Image from "next/image";
 import { urlForImage } from "@/sanity/lib/image";
+import { ArrowRight, Feather } from "lucide-react";
 
 export const metadata = {
-  title: "Blog - Ivan Barinaga Psicólogo",
-  description:
-    "Artículos sobre salud mental, terapia cognitivo-conductual y bienestar emocional por Ivan Barinaga.",
+  title: "Escritos",
+  description: "Archivo de artículos, lecturas y ensayos de Leon Di Monte.",
 };
 
-async function getPosts(page = 1, pageSize = 10) {
-  const skip = (page - 1) * pageSize;
-  const query = groq`
-    *[_type == "post"] | order(publishedAt desc) [${skip}...${skip + pageSize}] {
-      _id,
-      title,
-      slug,
-      publishedAt,
-      excerpt,
-      mainImage
-    }
-  `;
-  return client.fetch(query);
+async function getPosts(page = 1, pageSize = 12) {
+  try {
+    const skip = (page - 1) * pageSize;
+    const query = groq`
+      *[_type == "post"] | order(publishedAt desc) [${skip}...${skip + pageSize}] {
+        _id,
+        title,
+        slug,
+        publishedAt,
+        excerpt,
+        mainImage,
+        "categories": categories[]->title
+      }
+    `;
+    return await client.fetch(query);
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    return [];
+  }
 }
 
 async function getTotalPosts() {
-  const query = groq`count(*[_type == "post"])`;
-  return client.fetch(query);
+  try {
+    const query = groq`count(*[_type == "post"])`;
+    return await client.fetch(query);
+  } catch (error) {
+    return 0;
+  }
 }
 
-export default async function BlogPage({ searchParams }: any) {
-  const { page } = await searchParams;
-  const pageNumber = Number(page) || 1;
-  const pageSize = 10;
+export default async function BlogPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const resolvedSearchParams = await searchParams;
+  const pageNumber = Number(resolvedSearchParams?.page) || 1;
+  const pageSize = 12;
   const totalPosts = await getTotalPosts();
-  const totalPages = Math.ceil(totalPosts / pageSize);
+  const totalPages = Math.ceil(totalPosts / pageSize) || 1;
   const posts = await getPosts(pageNumber, pageSize);
 
   return (
-    <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <h1 className="text-3xl font-bold mb-8 text-center">Blog</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {posts.map((post: any) => (
-          <div
-            key={post.slug.current}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden"
-          >
-            <Link href={`/blog/${post.slug.current}`}>
-              {post.mainImage && (
-                <div className="relative h-48">
-                  <Image
-                    src={urlForImage(post.mainImage).url()}
-                    alt={post.title}
-                    layout="fill"
-                    objectFit="cover"
-                    className="rounded-t-lg"
-                  />
+    <div className="max-w-3xl mx-auto py-12 md:py-16 space-y-12">
+      <header className="space-y-3 border-b border-neutral-200/80 dark:border-neutral-800/80 pb-6">
+        <h1 className="text-3xl font-serif tracking-tight text-neutral-900 dark:text-neutral-100 font-normal">
+          Escritos
+        </h1>
+        <p className="text-sm text-neutral-600 dark:text-neutral-400">
+          Ensayos, notas y reflexiones archivadas cronológicamente.
+        </p>
+      </header>
+
+      {posts && posts.length > 0 ? (
+        <div className="divide-y divide-neutral-100 dark:divide-neutral-800/60">
+          {posts.map((post: any) => (
+            <article
+              key={post._id || post.slug?.current}
+              className="py-8 first:pt-0 last:pb-0 group"
+            >
+              <Link href={`/blog/${post.slug?.current}`} className="block space-y-3">
+                <div className="flex items-center gap-3 text-xs text-neutral-500 dark:text-neutral-400">
+                  {post.publishedAt && (
+                    <time dateTime={post.publishedAt}>
+                      {new Date(post.publishedAt).toLocaleDateString("es-ES", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </time>
+                  )}
+                  {post.categories && post.categories[0] && (
+                    <>
+                      <span>·</span>
+                      <span className="uppercase tracking-wider text-[10px]">
+                        {post.categories[0]}
+                      </span>
+                    </>
+                  )}
                 </div>
-              )}
-              <div className="p-6">
-                <h2 className="text-xl font-semibold mb-2">{post.title}</h2>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
-                  {new Date(post.publishedAt).toLocaleDateString("es-AR")}
-                </p>
-                <p className="text-blue-600 dark:text-blue-400 font-semibold">
-                  Leer más →
-                </p>
-              </div>
+
+                <h2 className="text-xl sm:text-2xl font-serif text-neutral-900 dark:text-neutral-100 group-hover:text-neutral-600 dark:group-hover:text-neutral-300 transition-colors">
+                  {post.title}
+                </h2>
+
+                {post.mainImage && (
+                  <div className="relative aspect-[21/9] w-full overflow-hidden rounded-md my-4 bg-neutral-100 dark:bg-neutral-900">
+                    <Image
+                      src={urlForImage(post.mainImage).url()}
+                      alt={post.title}
+                      fill
+                      className="object-cover group-hover:scale-[1.01] transition-transform duration-300"
+                    />
+                  </div>
+                )}
+
+                {post.excerpt && (
+                  <p className="text-sm sm:text-base leading-relaxed text-neutral-600 dark:text-neutral-400 line-clamp-3">
+                    {post.excerpt}
+                  </p>
+                )}
+
+                <div className="pt-2 text-xs font-medium text-neutral-900 dark:text-neutral-200 inline-flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                  Leer escrito <ArrowRight size={12} />
+                </div>
+              </Link>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div className="py-16 text-center border border-dashed border-neutral-200 dark:border-neutral-800 rounded-lg p-8 space-y-3">
+          <Feather className="mx-auto h-8 w-8 text-neutral-400 dark:text-neutral-600" />
+          <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+            Aún no hay publicaciones
+          </p>
+          <p className="text-xs text-neutral-500 dark:text-neutral-400 max-w-sm mx-auto">
+            Los escritos que publiques desde tu panel aparecerán en esta sección.
+          </p>
+        </div>
+      )}
+
+      {totalPages > 1 && (
+        <nav className="flex justify-between items-center pt-8 border-t border-neutral-200/80 dark:border-neutral-800/80 text-xs font-medium text-neutral-600 dark:text-neutral-400">
+          {pageNumber > 1 ? (
+            <Link
+              href={`?page=${pageNumber - 1}`}
+              className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
+            >
+              ← Anteriores
             </Link>
-          </div>
-        ))}
-      </div>
-      <div className="flex justify-between mt-8">
-        {pageNumber > 1 ? (
-          <Link
-            href={`?page=${pageNumber - 1}`}
-            className="text-blue-600 dark:text-blue-400 font-semibold"
-          >
-            ← Anterior
-          </Link>
-        ) : (
-          <div></div>
-        )}
-        {pageNumber < totalPages ? (
-          <Link
-            href={`?page=${pageNumber + 1}`}
-            className="text-blue-600 dark:text-blue-400 font-semibold"
-          >
-            Siguiente →
-          </Link>
-        ) : (
-          <div></div>
-        )}
-      </div>
+          ) : (
+            <span />
+          )}
+          <span>
+            Página {pageNumber} de {totalPages}
+          </span>
+          {pageNumber < totalPages ? (
+            <Link
+              href={`?page=${pageNumber + 1}`}
+              className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
+            >
+              Siguientes →
+            </Link>
+          ) : (
+            <span />
+          )}
+        </nav>
+      )}
     </div>
   );
 }
