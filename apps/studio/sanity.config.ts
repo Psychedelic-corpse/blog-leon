@@ -7,7 +7,7 @@ export default defineConfig({
   name: 'default',
   title: 'Leon Di Monte',
 
-  projectId: process.env.SANITY_STUDIO_PROJECT_ID || 'f6lkoed1',
+  projectId: process.env.SANITY_STUDIO_PROJECT_ID || 'b0mw2pap',
   dataset: process.env.SANITY_STUDIO_DATASET || 'production',
 
   plugins: [structureTool(), visionTool()],
