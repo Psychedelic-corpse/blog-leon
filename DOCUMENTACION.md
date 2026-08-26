@@ -10,10 +10,8 @@ Este documento reúne toda la información técnica, configuración, credenciale
 * **Panel de Redacción (Sanity Studio):** [https://leondm.sanity.studio](https://leondm.sanity.studio)
 * **Repositorio en GitHub:** [https://github.com/Psychedelic-corpse/blog-leon](https://github.com/Psychedelic-corpse/blog-leon)
 * **Sanity Dashboard:** [https://manage.sanity.io/](https://manage.sanity.io/)
-  * **Project ID:** `b0mw2pap`
-  * **Dataset:** `production`
-  * **Owner:** Tu cuenta
-  * **Editor:** León Di Monte
+  * **Project ID:** Configurado vía variable de entorno (`NEXT_PUBLIC_SANITY_PROJECT_ID`)
+  * **Dataset:** `production` (o el dataset configurado)
 
 ---
 
@@ -73,7 +71,7 @@ pnpm run deploy
 
 En `apps/web/.env.local` y en **Vercel (Settings > Environment Variables)**:
 ```env
-NEXT_PUBLIC_SANITY_PROJECT_ID=b0mw2pap
+NEXT_PUBLIC_SANITY_PROJECT_ID=tu_project_id_aqui
 NEXT_PUBLIC_SANITY_DATASET=production
 ```
 

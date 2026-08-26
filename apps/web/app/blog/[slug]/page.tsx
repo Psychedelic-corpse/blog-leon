@@ -13,7 +13,7 @@ export const revalidate = 0;
 
 async function getPost(slug: string) {
   const query = groq`
-    *[_type == "post" && slug.current == $slug][0] {
+    *[_type == "post" && slug.current == $slug && !(_id in path("drafts.**"))][0] {
       title,
       publishedAt,
       body,
@@ -187,6 +187,44 @@ export default async function BlogPostPage({
                     {children}
                   </blockquote>
                 ),
+              },
+              marks: {
+                link: ({ value, children }: any) => {
+                  const href = value?.href || "";
+                  const isExternal = /^https?:\/\//i.test(href);
+                  const isSafeScheme =
+                    /^https?:\/\//i.test(href) ||
+                    /^mailto:/i.test(href) ||
+                    /^tel:/i.test(href) ||
+                    href.startsWith("/") ||
+                    href.startsWith("#");
+
+                  if (!isSafeScheme) {
+                    return <span>{children}</span>;
+                  }
+
+                  if (isExternal) {
+                    return (
+                      <a
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline underline-offset-4 decoration-neutral-400 hover:decoration-neutral-900 dark:hover:decoration-neutral-100 transition-colors"
+                      >
+                        {children}
+                      </a>
+                    );
+                  }
+
+                  return (
+                    <Link
+                      href={href}
+                      className="underline underline-offset-4 decoration-neutral-400 hover:decoration-neutral-900 dark:hover:decoration-neutral-100 transition-colors"
+                    >
+                      {children}
+                    </Link>
+                  );
+                },
               },
             }}
           />

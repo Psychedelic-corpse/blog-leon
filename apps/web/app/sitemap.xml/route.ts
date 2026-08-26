@@ -2,55 +2,96 @@ import { client } from "@/sanity/lib/client";
 import { NextResponse } from "next/server";
 import { groq } from "next-sanity";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 3600;
+
+function escapeXml(unsafe: string) {
+  return unsafe.replace(/[<>&'"]/g, (c) => {
+    switch (c) {
+      case "<":
+        return "&lt;";
+      case ">":
+        return "&gt;";
+      case "&":
+        return "&amp;";
+      case "'":
+        return "&apos;";
+      case '"':
+        return "&quot;";
+      default:
+        return c;
+    }
+  });
+}
+
 async function getAllPosts() {
-  const posts = await client.fetch(groq`*[_type == "post"]`);
-  return posts;
+  try {
+    const query = groq`
+      *[_type == "post" && !(_id in path("drafts.**")) && defined(slug.current)] {
+        "slug": slug.current,
+        _updatedAt,
+        publishedAt
+      }
+    `;
+    return await client.fetch(query);
+  } catch (error) {
+    console.error("Error fetching posts for sitemap:", error);
+    return [];
+  }
 }
 
 export async function GET() {
-  // Fetch dynamic routes, e.g., blog posts
   const posts = await getAllPosts();
 
-  // Define static routes
   const staticPages = [
-    { url: "https://leondm.com/", changefreq: "weekly", priority: 1.0 },
+    { url: "https://leondm.com", changefreq: "weekly", priority: "1.0" },
     {
       url: "https://leondm.com/blog",
       changefreq: "daily",
-      priority: 0.8,
+      priority: "0.8",
     },
   ];
 
-  // Combine static and dynamic routes
-  const allPages = [
-    ...staticPages,
-    ...posts.map((post: any) => ({
-      url: `https://leondm.com/blog/${post.slug.current}`,
-      changefreq: "never",
-      priority: 0.7,
-    })),
-  ];
+  const postPages = posts
+    .filter((post: any) => Boolean(post?.slug))
+    .map((post: any) => ({
+      url: `https://leondm.com/blog/${encodeURIComponent(post.slug)}`,
+      changefreq: "monthly",
+      priority: "0.7",
+      lastmod: post._updatedAt || post.publishedAt,
+    }));
 
-  // Generate XML
+  const allPages = [...staticPages, ...postPages];
+
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-  <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    ${allPages
-      .map(
-        ({ url, changefreq, priority }) => `
-        <url>
-          <loc>${url}</loc>
-          <changefreq>${changefreq}</changefreq>
-          <priority>${priority}</priority>
-        </url>
-      `
-      )
-      .join("")}
-  </urlset>`;
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${allPages
+  .map((page: any) => {
+    let lastmodTag = "";
+    if (page.lastmod) {
+      try {
+        const d = new Date(page.lastmod);
+        if (!isNaN(d.getTime())) {
+          lastmodTag = `\n    <lastmod>${d.toISOString()}</lastmod>`;
+        }
+      } catch {
+        lastmodTag = "";
+      }
+    }
+    return `  <url>
+    <loc>${escapeXml(page.url)}</loc>${lastmodTag}
+    <changefreq>${escapeXml(page.changefreq)}</changefreq>
+    <priority>${escapeXml(page.priority)}</priority>
+  </url>`;
+  })
+  .join("\n")}
+</urlset>`;
 
-  // Return the sitemap as a response
   return new NextResponse(sitemap, {
     headers: {
-      "Content-Type": "application/xml",
+      "Content-Type": "application/xml; charset=utf-8",
+      "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
     },
   });
 }
+

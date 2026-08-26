@@ -15,9 +15,10 @@ export const revalidate = 0;
 
 async function getPosts(page = 1, pageSize = 12) {
   try {
-    const skip = (page - 1) * pageSize;
+    const safePage = Math.max(1, Math.floor(Number(page) || 1));
+    const skip = (safePage - 1) * pageSize;
     const query = groq`
-      *[_type == "post"] | order(publishedAt desc) [${skip}...${skip + pageSize}] {
+      *[_type == "post" && !(_id in path("drafts.**")) && defined(slug.current)] | order(publishedAt desc) [${skip}...${skip + pageSize}] {
         _id,
         title,
         slug,
@@ -36,7 +37,7 @@ async function getPosts(page = 1, pageSize = 12) {
 
 async function getTotalPosts() {
   try {
-    const query = groq`count(*[_type == "post"])`;
+    const query = groq`count(*[_type == "post" && !(_id in path("drafts.**")) && defined(slug.current)])`;
     return await client.fetch(query);
   } catch (error) {
     return 0;
@@ -49,10 +50,11 @@ export default async function BlogPage({
   searchParams: Promise<{ page?: string }>;
 }) {
   const resolvedSearchParams = await searchParams;
-  const pageNumber = Number(resolvedSearchParams?.page) || 1;
+  const rawPage = Number(resolvedSearchParams?.page);
+  const pageNumber = Number.isFinite(rawPage) && rawPage > 0 ? Math.floor(rawPage) : 1;
   const pageSize = 12;
   const totalPosts = await getTotalPosts();
-  const totalPages = Math.ceil(totalPosts / pageSize) || 1;
+  const totalPages = Math.max(1, Math.ceil(totalPosts / pageSize));
   const posts = await getPosts(pageNumber, pageSize);
 
   return (

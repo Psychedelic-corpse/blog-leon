@@ -18,7 +18,7 @@ export const revalidate = 0;
 async function getRecentPosts() {
   try {
     const query = groq`
-      *[_type == "post"] | order(publishedAt desc) [0...6] {
+      *[_type == "post" && !(_id in path("drafts.**")) && defined(slug.current)] | order(publishedAt desc) [0...6] {
         _id,
         title,
         slug,
