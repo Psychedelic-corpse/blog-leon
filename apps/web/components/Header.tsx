@@ -33,6 +33,12 @@ export default function Header() {
           >
             Escritos
           </Link>
+          <Link
+            href="/imagenes"
+            className="text-sm font-normal text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
+          >
+            Imágenes
+          </Link>
           <button
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             className="p-2 rounded-md text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-800/60 transition-colors"
@@ -77,6 +83,13 @@ export default function Header() {
             onClick={() => setIsMenuOpen(false)}
           >
             Escritos
+          </Link>
+          <Link
+            href="/imagenes"
+            className="block text-sm text-neutral-700 dark:text-neutral-300 py-1"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Imágenes
           </Link>
         </div>
       )}

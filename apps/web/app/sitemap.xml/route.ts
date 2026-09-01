@@ -50,6 +50,11 @@ export async function GET() {
       changefreq: "daily",
       priority: "0.8",
     },
+    {
+      url: "https://leondm.com/imagenes",
+      changefreq: "daily",
+      priority: 0.8,
+    },
   ];
 
   const postPages = posts

@@ -24,6 +24,9 @@ export default function Footer() {
             <Link href="/blog" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">
               Escritos
             </Link>
+            <Link href="/imagenes" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">
+              Imágenes
+            </Link>
           </div>
         </div>
 
